@@ -2,6 +2,8 @@
 
 An easy way to verify the installation of SSL certificates.
 
+[![Build Status](https://travis-ci.org/clayton/sslcheck.svg?branch=master)](https://travis-ci.org/clayton/sslcheck)
+
 The MIT License (MIT)
 
 Copyright (c) 2014 Clayton Lengel-Zigich
