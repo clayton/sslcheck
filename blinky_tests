@@ -1,0 +1,3 @@
+#!/bin/bash
+
+blinky-tape-test-tool f && bundle exec rspec spec && blinky-tape-test-tool gs || blinky-tape-test-tool rs
