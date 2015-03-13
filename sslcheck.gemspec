@@ -5,7 +5,7 @@ require 'sslcheck/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "sslcheck"
-  spec.version       = Sslcheck::VERSION
+  spec.version       = SSLCheck::VERSION
   spec.authors       = ["Clayton Lengel-Zigich"]
   spec.email         = ["clayton@claytonlz.com"]
   spec.summary       = %q{Discover errors with SSL certificates.}
