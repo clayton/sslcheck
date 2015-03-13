@@ -5,6 +5,6 @@ blinky-tape-test-tool xs
 /usr/local/bin/fswatch -o spec lib | xargs -n1 ./blinky_tests
 
 
-# bundle exec rspec spec
-# /usr/local/bin/fswatch -o spec lib | xargs -n1 bundle exec rspec spec
+#bundle exec rspec spec
+#/usr/local/bin/fswatch -o spec lib | xargs -n1 bundle exec rspec spec
 
