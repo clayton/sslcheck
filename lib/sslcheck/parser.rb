@@ -1,4 +1,4 @@
-module SslCheck
+module SSLCheck
   class Parser
     class SSLNotConfigured < StandardError; end
 

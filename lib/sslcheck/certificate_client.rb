@@ -1,6 +1,6 @@
 require 'uri'
 
-module SslCheck
+module SSLCheck
   class CertificateClient
     def fetch(url)
       uri = URI.parse(url)
