@@ -1,13 +1,32 @@
 require 'spec_helper'
 
-module SslCheck
+module SSLCheck
   describe Certificate do
     before(:each) do
       @sut = Certificate.new(VALID_CERT)
     end
-    describe "with no certificate text" do
-      it "should raise an exception" do
-        expect {Certificate.new(nil)}.to raise_exception(Certificate::MissingCertificate)
+    describe 'to_h' do
+      it 'should easily turn into a hash' do
+        clock = class_double(DateTime, :now => DateTime.parse("2014-12-31 00:00:00"))
+        sut = Certificate.new(VALID_CERT, clock)
+        actual_hash = sut.to_h
+        expected_hash = {
+          :common_name       => "www.npboards.com",
+          :organization_unit => "Domain Control Validated",
+          :not_before        => DateTime.parse("Tue, 17 Jun 2014 18:16:01 +0000"),
+          :not_after         => DateTime.parse("Tue, 17 Jun 2015 18:16:01 +0000"),
+          :issued            => true,
+          :expired           => false,
+          :issuer            => {
+            :common_name  => "Go Daddy Secure Certificate Authority - G2",
+            :country      => "US",
+            :state        => "Arizona",
+            :locality     => "Scottsdale",
+            :organization => "GoDaddy.com, Inc."
+          }
+        }
+
+        expect(actual_hash).to eq(expected_hash)
       end
     end
     describe "subject" do

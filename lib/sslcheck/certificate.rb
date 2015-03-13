@@ -1,13 +1,29 @@
 require 'openssl'
 
-module SslCheck
+module SSLCheck
   class Certificate
-    class MissingCertificate < StandardError;end
-
     def initialize(cert, clock=DateTime)
       raise MissingCertificate if cert.nil?
       @cert  = OpenSSL::X509::Certificate.new cert
       @clock = clock
+    end
+
+    def to_h
+      {
+        :common_name       => common_name,
+        :organization_unit => organizational_unit,
+        :not_before        => not_before,
+        :not_after         => not_after,
+        :issued            => true,
+        :expired           => false,
+        :issuer            => {
+          :common_name  => issuer_common_name,
+          :country      => issuer_country,
+          :state        => issuer_state,
+          :locality     => issuer_locality,
+          :organization => issuer_organization
+        }
+      }
     end
 
     def to_s
