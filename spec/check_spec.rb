@@ -28,7 +28,7 @@ module SSLCheck
     describe 'checking' do
       it 'should tell the client to get the certs' do
         fake_client = FakeClient.new
-        @sut = Check.new(fake_client)
+        @sut = Check.new(fake_client, FakeValidator.new)
         expect(fake_client).to receive(:get).with("www.example.com").and_return(FakeClientResponse.new)
         @sut.check('www.example.com')
       end
