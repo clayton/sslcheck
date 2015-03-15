@@ -29,6 +29,40 @@ module SSLCheck
         expect(actual_hash).to eq(expected_hash)
       end
     end
+    describe 'extensions' do
+      describe 'Subject Alternate Name' do
+        context "when it has as subject alternate name extension" do
+          it 'should expose the altername names as alternate common names' do
+            sut = Certificate.new(VALID_CERT)
+
+            expect(sut.alternate_common_names).to include("www.npboards.com")
+            expect(sut.alternate_common_names).to include("npboards.com")
+          end
+        end
+        context "when it only has one alternate name in the extension" do
+          it 'should expose only that name' do
+            ext = OpenSSL::X509::Extension.new "subjectAltName", "DNS:example.com"
+            cert = OpenSSL::X509::Certificate.new VALID_CERT
+
+            allow(cert).to receive(:extensions).and_return [ext]
+            sut = Certificate.new(cert)
+
+            expect(sut.alternate_common_names).to include("example.com")
+            expect(sut.alternate_common_names).to_not include("npboards.com")
+            expect(sut.alternate_common_names).to_not include("www.npboards.com")
+          end
+        end
+        context "when it has no subject alternate name extension" do
+          it 'should expose no alternate names' do
+            cert = OpenSSL::X509::Certificate.new VALID_CERT
+            allow(cert).to receive(:extensions).and_return []
+            sut = Certificate.new(cert)
+
+            expect(sut.alternate_common_names).to eq([])
+          end
+        end
+      end
+    end
     describe "subject" do
       it "should expose the certificate's subject" do
         expect(@sut.subject).to eq "/OU=Domain Control Validated/CN=www.npboards.com"

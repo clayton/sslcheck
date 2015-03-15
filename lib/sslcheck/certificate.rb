@@ -2,10 +2,9 @@ require 'openssl'
 
 module SSLCheck
   class Certificate
-    def initialize(cert, clock=DateTime)
-      raise MissingCertificate if cert.nil?
-      @cert  = OpenSSL::X509::Certificate.new cert
-      @clock = clock
+    def initialize(cert, clock=nil)
+      @cert = bootstrap_certificate(cert)
+      @clock = clock || DateTime
     end
 
     def to_h
@@ -41,6 +40,14 @@ module SSLCheck
 
     def common_name
       subject.scan(/CN=(.*)/)[0][0]
+    end
+
+    def alternate_common_names
+      ext = @cert.extensions.find{|ext| ext.oid == "subjectAltName" }
+      return [] unless ext
+      alternates = ext.value.split(",")
+      names = alternates.map{|a| a.scan(/DNS:(.*)/)[0][0]}
+      names
     end
 
     def issuer
@@ -98,6 +105,14 @@ module SSLCheck
 
     def issued?
       @clock.now > not_before
+    end
+
+    def bootstrap_certificate(cert)
+      if cert.is_a?(OpenSSL::X509::Certificate)
+        return cert
+      else
+        return OpenSSL::X509::Certificate.new cert
+      end
     end
 
   end
