@@ -2,11 +2,40 @@ require 'openssl'
 
 module SSLCheck
   class Validator
+    class CommonNameMissingError < SSLCheck::ValidationError;end
 
-  def validate(peer_cert=nil, ca_bundle=[])
+    def initialize
+      @valid       = false
+      @errors      = []
+      @warnings    = []
+      @common_name = nil
+      @peer_cert   = nil
+      @ca_bundle   = []
+    end
 
+    def validate(common_name=nil, peer_cert=nil, ca_bundle=[])
+      @common_name = common_name
+      @valid = validate_common_name
+    end
 
-  end
+    def valid?
+      @valid
+    end
+
+    def errors
+      @errors
+    end
+
+    def warnings
+      []
+    end
+
+  private
+    def validate_common_name
+      return true unless @common_name.nil? || @common_name.empty?
+      @errors << CommonNameMissingError.new({:name => "Common Name Missing", :message => "No Common Name was provided against which to validate."})
+      false
+    end
 
   #   class InvalidCertificate < StandardError;end
   #   class InvalidCommonName < StandardError;end
