@@ -2,7 +2,9 @@ require 'openssl'
 
 module SSLCheck
   class Validator
-    class CommonNameMissingError < SSLCheck::ValidationError;end
+    class CommonNameMissingError < ArgumentError;end
+    class PeerCertificateMissingError < ArgumentError;end
+    class CABundleMissingError < ArgumentError;end
 
     def initialize
       @valid       = false
@@ -11,15 +13,21 @@ module SSLCheck
       @common_name = nil
       @peer_cert   = nil
       @ca_bundle   = []
+      @validated   = false
     end
 
-    def validate(common_name=nil, peer_cert=nil, ca_bundle=[])
+    def validate(common_name=nil, peer_cert=nil, ca_bundle=[], validators=[])
+      raise CommonNameMissingError if common_name.nil? || common_name.empty?
+      raise PeerCertificateMissingError if peer_cert.nil?
+      raise CABundleMissingError if ca_bundle.nil? || ca_bundle.empty?
       @common_name = common_name
-      @valid = validate_common_name
+      @peer_cert = peer_cert
+
+      run_validations(validators)
     end
 
     def valid?
-      @valid
+      @validated && @errors.empty?
     end
 
     def errors
@@ -31,11 +39,15 @@ module SSLCheck
     end
 
   private
-    def validate_common_name
-      return true unless @common_name.nil? || @common_name.empty?
-      @errors << CommonNameMissingError.new({:name => "Common Name Missing", :message => "No Common Name was provided against which to validate."})
-      false
+    def run_validations(validators)
+      validators.each do |validator|
+        @errors << validator.new(@common_name, @peer_cert, @ca_bundle).validate
+      end
+      @validated = true
     end
+
+  end
+end
 
   #   class InvalidCertificate < StandardError;end
   #   class InvalidCommonName < StandardError;end
@@ -90,5 +102,3 @@ module SSLCheck
   #       raise MissingCACertificate
   #     end
   #   end
-  end
-end

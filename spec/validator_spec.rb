@@ -3,23 +3,43 @@ require 'spec_helper'
 module SSLCheck
   describe 'Validator' do
     describe 'Validating a Certificate' do
+      it 'should validate the certificate with available validators' do
+        cert = Certificate.new(VALID_CERT)
+        ca_bundle = [Certificate.new(CA_PARENT), Certificate.new(CA_GRAND_PARENT)]
+        sut = Validator.new
+        validator = Validators::GenericValidator
+
+        expect(validator).to receive(:new).and_return(Validators::GenericValidator.new("example.com", cert, ca_bundle))
+        sut.validate("example.com", cert, ca_bundle, [validator])
+      end
       context "when an expected common name is not supplied" do
         before do
           @sut = Validator.new
-          @sut.validate("", nil, [])
         end
-        it 'should not be valid' do
-          expect(@sut.valid?).to_not be
+        it 'should raise an exception' do
+          expect{@sut.validate("", nil, [])}.to raise_exception(Validator::CommonNameMissingError)
         end
-        it 'should have errors' do
-          expect(@sut.errors).to_not be_empty
-          expect(@sut.errors.map{|e| e.class }).to include(Validator::CommonNameMissingError)
+      end
+      context "when a peer certificate is not supplied" do
+        before do
+          @sut = Validator.new
+        end
+        it 'should raise an exception' do
+          expect{@sut.validate("www.example.com", nil, [])}.to raise_exception(Validator::PeerCertificateMissingError)
+        end
+      end
+      context "when a CA bundle is not supplied" do
+        before do
+          @sut = Validator.new
+        end
+        it 'should raise an exception' do
+          expect{@sut.validate("www.example.com", Certificate.new(VALID_CERT), [])}.to raise_exception(Validator::CABundleMissingError)
         end
       end
       context 'when the certificate is valid' do
         before do
-          @cert = OpenSSL::X509::Certificate.new(VALID_CERT)
-          @ca_bundle = [OpenSSL::X509::Certificate.new(CA_PARENT), OpenSSL::X509::Certificate.new(CA_GRAND_PARENT)]
+          @cert = Certificate.new(VALID_CERT)
+          @ca_bundle = [Certificate.new(CA_PARENT), Certificate.new(CA_GRAND_PARENT)]
           @sut = Validator.new
         end
 
@@ -37,19 +57,24 @@ module SSLCheck
           @sut.validate("www.npboards.com", @cert, @ca_bundle)
           expect(@sut.warnings).to be_empty
         end
-      end
-      context "when the certificate is not valid" do
-        context "when the common name is mismatched" do
-          before do
-            @cert = OpenSSL::X509::Certificate.new(VALID_CERT)
-            @ca_bundle = [OpenSSL::X509::Certificate.new(CA_PARENT), OpenSSL::X509::Certificate.new(CA_GRAND_PARENT)]
+        context "when the certificate was issused to a wildcard domain" do
+          it 'should be valid' do
+            @cert = Certificate.new(WILDCARD_CERT)
+            @ca_bundle = [Certificate.new(CA_PARENT), Certificate.new(CA_GRAND_PARENT)]
             @sut = Validator.new
-          end
-          xit 'should not be valid' do
-            @sut.validate("example.com", @cert, @ca_bundle)
-            expect(@sut.valid?).to_not be
+            @sut.validate("foobar.squarespace.com", @cert, @ca_bundle)
+
+            expect(@sut.valid?).to be
           end
         end
+        context "when the certificate has alternate subject names" do
+          it 'should allow matches against the supplied common name' do
+            @sut.validate("npboards.com", @cert, @ca_bundle)
+            expect(@sut.valid?).to be
+          end
+        end
+      end
+      xcontext "when the certificate is not valid" do
       end
     end
   end

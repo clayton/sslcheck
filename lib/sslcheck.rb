@@ -6,10 +6,12 @@ module SSLCheck
 end
 
 require 'sslcheck/certificate'
-require 'sslcheck/validation_error'
 require 'sslcheck/validator'
 require 'sslcheck/certificate_client'
 require 'sslcheck/parser'
 require 'sslcheck/generic_error'
 require 'sslcheck/check'
 require 'sslcheck/client'
+require 'sslcheck/validators/generic_validator'
+require 'sslcheck/validators/errors'
+require 'sslcheck/validators/common_name'
