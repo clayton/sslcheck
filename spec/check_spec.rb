@@ -52,6 +52,12 @@ module SSLCheck
         expect(@sut.checked?).to be
       end
 
+      it 'should know what URL was checked' do
+        @sut = Check.new(FakeClient.new(FakeClientResponse.new(@peer_cert, @ca_bundle)), FakeValidator.new)
+        @sut.check('www.example.com')
+        expect(@sut.url).to eq("www.example.com")
+      end
+
       context "when there is an error checking the certificate" do
         it 'should not be valid' do
           error = SSLCheck::Errors::GenericError.new({:name => :invalid_uri, :message => "Invalid URI"})

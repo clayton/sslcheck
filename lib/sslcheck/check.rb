@@ -12,6 +12,7 @@ module SSLCheck
       fetch(url)
       validate if no_errors?
       @checked = true
+      @url = url
       return self
     end
 
@@ -32,6 +33,10 @@ module SSLCheck
     def checked?
       return true if @checked
       false
+    end
+
+    def url
+      @url
     end
 
   private
