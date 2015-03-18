@@ -1,15 +1,11 @@
 module SSLCheck
   module Errors
-    class Validation
-      attr_accessor :name, :message
-      def initialize(opts={})
-        self.name = opts[:name]
-        self.message = opts[:message]
-      end
+    class Validation < GenericError
+    end
 
-      def to_s
-        "[#{self.name}] #{self.message}"
-      end
+    module Connection
+      class InvalidURI < GenericError; end
+      class SSLVerify < GenericError; end
     end
 
     class CommonNameMismatch < Validation;end

@@ -32,11 +32,18 @@ module SSLCheck
         expect(fake_client).to receive(:get).with("www.example.com").and_return(FakeClientResponse.new)
         @sut.check('www.example.com')
       end
+
       it 'should expose the certificates that were found' do
         @sut = Check.new(FakeClient.new(FakeClientResponse.new(@peer_cert, @ca_bundle)), FakeValidator.new)
         @sut.check('www.example.com')
         expect(@sut.peer_cert).to eq(@peer_cert)
         expect(@sut.ca_bundle).to eq(@ca_bundle)
+      end
+
+      it 'should expose the hostname parsed from the URL' do
+        @sut = Check.new(FakeClient.new(FakeClientResponse.new(@peer_cert, @ca_bundle, "www.example.com")), FakeValidator.new)
+        @sut.check('www.example.com')
+        expect(@sut.host_name).to eq("www.example.com")
       end
 
       it 'should know when the check has completed' do
@@ -47,14 +54,14 @@ module SSLCheck
 
       context "when there is an error checking the certificate" do
         it 'should not be valid' do
-          error = Client::Error.new({:name => :invalid_uri, :message => "Invalid URI"})
+          error = SSLCheck::Errors::GenericError.new({:name => :invalid_uri, :message => "Invalid URI"})
           @sut  = Check.new(FakeClient.new(nil, [error]), FakeValidator.new)
           @sut.check('www.example.com')
           expect(@sut.valid?).to_not be
         end
         context "when the URI is malformed" do
           it 'should add an error to the error list' do
-            error = Client::Error.new({:name => :invalid_uri, :message => "Invalid URI"})
+            error = SSLCheck::Errors::GenericError.new({:name => :invalid_uri, :message => "Invalid URI"})
             validator = FakeValidator.new
             @sut  = Check.new(FakeClient.new(nil, [error]), validator)
 
@@ -62,14 +69,14 @@ module SSLCheck
             @sut.check('www.example.com')
           end
           it 'should not try to validate the certificate' do
-            error = Client::Error.new({:name => :invalid_uri, :message => "Invalid URI"})
+            error = SSLCheck::Errors::GenericError.new({:name => :invalid_uri, :message => "Invalid URI"})
             @sut  = Check.new(FakeClient.new(nil, [error]))
             @sut.check('www.example.com')
           end
         end
         context "when there was an OpenSSL error" do
           it 'should add an error to the error list' do
-            error = Client::Error.new({:name => :openssl_error, :message => "OpenSSL Verification Error"})
+            error = SSLCheck::Errors::GenericError.new({:name => :openssl_error, :message => "OpenSSL Verification Error"})
             @sut  = Check.new(FakeClient.new(nil, [error]))
             @sut.check('www.example.com')
             expect(@sut.errors).to eq([error])
@@ -83,7 +90,7 @@ module SSLCheck
       it 'should tell the validator to validate the peer certificate' do
         validator = FakeValidator.new
         @sut = Check.new(FakeClient.new(FakeClientResponse.new(@peer_cert, @ca_bundle)), validator)
-        expect(validator).to receive(:validate).with(@peer_cert, @ca_bundle)
+        expect(validator).to receive(:validate).with("www.example.com", @peer_cert, @ca_bundle)
         @sut.check("www.example.com")
       end
       context "when the certificate is valid" do
@@ -118,9 +125,10 @@ class FakeClient
 end
 
 class FakeClientResponse
-  def initialize(peer_cert=nil, ca_bundle=nil)
+  def initialize(peer_cert=nil, ca_bundle=nil, host_name=nil)
     @peer_cert = peer_cert || SSLCheck::Certificate.new(VALID_CERT)
     @ca_bundle = ca_bundle || [SSLCheck::Certificate.new(CA_PARENT), SSLCheck::Certificate.new(CA_GRAND_PARENT)]
+    @host_name = host_name || "www.example.com"
     @errors = []
   end
 
@@ -130,6 +138,10 @@ class FakeClientResponse
 
   def ca_bundle
     @ca_bundle
+  end
+
+  def host_name
+    @host_name
   end
 
   def errors
@@ -144,7 +156,7 @@ class FakeValidator
     @errors = errors
   end
 
-  def validate(peer_cert, ca_bundle)
+  def validate(common_name, peer_cert, ca_bundle)
     @valid
   end
 

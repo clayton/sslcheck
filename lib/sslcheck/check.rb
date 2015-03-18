@@ -1,6 +1,6 @@
 module SSLCheck
   class Check
-    attr_accessor :peer_cert, :ca_bundle
+    attr_accessor :peer_cert, :ca_bundle, :host_name
     def initialize(client=nil, validator=nil)
       @client = client || Client.new
       @validator = validator || Validator.new
@@ -44,6 +44,7 @@ module SSLCheck
       response = @client.get(url)
       self.peer_cert = response.peer_cert
       self.ca_bundle = response.ca_bundle
+      self.host_name = response.host_name
 
       response.errors.each do |error|
         @errors << error
@@ -52,7 +53,7 @@ module SSLCheck
     end
 
     def validate
-      @validator.validate(peer_cert, ca_bundle)
+      @validator.validate(host_name, peer_cert, ca_bundle)
       true
     end
   end

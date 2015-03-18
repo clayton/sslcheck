@@ -1,9 +1,15 @@
 module SSLCheck
-  class GenericError
-    attr_accessor :type, :message
-    def initialize(opts={})
-      self.type    = opts[:type]
-      self.message = opts[:message]
+  module Errors
+    class GenericError
+      attr_accessor :name, :type, :message
+      def initialize(opts={})
+        self.name    = opts[:name]
+        self.type    = opts[:type]
+        self.message = opts[:message]
+      end
+      def to_s
+        "[#{self.name}] #{self.message}"
+      end
     end
   end
 end

@@ -4,6 +4,12 @@ module SSLCheck
   describe 'Client' do
     context "Getting Certificates" do
       context "When Things Go Well" do
+        it 'should have the host name' do
+          sut = Client.new
+          response = sut.get('https://www.sslinsight.com')
+          expect(response.host_name).to eq("www.sslinsight.com")
+        end
+
         it 'should have the peer certificate' do
           sut = Client.new
           response = sut.get('https://www.sslinsight.com')
@@ -16,11 +22,28 @@ module SSLCheck
           expect(response.peer_cert_chain.first).to be_a(OpenSSL::X509::Certificate)
         end
       end
-      context "When the Url is malformed" do
+
+      context "when the URL is missing the protocol" do
+        it 'should still provide a hostname for the response' do
+          sut = Client.new
+          response = sut.get('www.sslinsight.com')
+          expect(response.host_name).to eq("www.sslinsight.com")
+        end
+      end
+
+      context "when the URL has an http protocol" do
+        it 'should still provide a hostname for the response' do
+          sut = Client.new
+          response = sut.get('http://www.sslinsight.com')
+          expect(response.host_name).to eq("www.sslinsight.com")
+        end
+      end
+
+      context "When the URL is malformed" do
         it 'should raise an invalid URI error' do
           sut = Client.new
           response = sut.get('this is not even close to a valid url.com')
-          expect(response.errors.first).to be_a(Client::Error)
+          expect(response.errors.first).to be_a(SSLCheck::Errors::Connection::InvalidURI)
         end
       end
 
@@ -28,7 +51,7 @@ module SSLCheck
         it 'should raise a verification error' do
           sut = Client.new
           response = sut.get('http://www.claytonlz.com')
-          expect(response.errors.first).to be_a(Client::Error)
+          expect(response.errors.first).to be_a(SSLCheck::Errors::Connection::SSLVerify)
         end
       end
 
@@ -36,7 +59,7 @@ module SSLCheck
         it 'should raise a verification error' do
           sut = Client.new
           response = sut.get('https://www.pcwebshop.co.uk')
-          expect(response.errors.first).to be_a(Client::Error)
+          expect(response.errors.first).to be_a(SSLCheck::Errors::Connection::SSLVerify)
         end
       end
     end
