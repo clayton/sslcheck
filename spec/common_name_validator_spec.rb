@@ -12,6 +12,22 @@ module SSLCheck
         result = sut.validate
         expect(result).to_not be
       end
+      context "when the certificate was issued to a wildcard domain" do
+        it 'should return nothing' do
+          wildcard_cert = Certificate.new(WILDCARD_CERT)
+          sut = Validators::CommonName.new("example.squarespace.com", wildcard_cert, @ca_bundle)
+          result = sut.validate
+          expect(result).to_not be
+        end
+      end
+      context "when the certificate has alternate subject names" do
+        it 'should allow matches against the supplied common name' do
+          sut = Validators::CommonName.new("npboards.com", @cert, @ca_bundle)
+          result = sut.validate
+          expect(result).to_not be
+        end
+      end
+
     end
     context "when the common name is mismatched" do
       it 'should return errors' do

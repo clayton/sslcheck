@@ -9,6 +9,7 @@ module SSLCheck
       class CommonNameMismatch < GenericError;end
       class NotYetIssued < GenericError;end
       class CertificateExpired < GenericError;end
+      class CABundleVerification < GenericError;end
     end
   end
 end

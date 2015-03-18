@@ -7,6 +7,10 @@ module SSLCheck
       @clock = clock || DateTime
     end
 
+    def to_x509
+      OpenSSL::X509::Certificate.new @cert.to_s
+    end
+
     def to_h
       {
         :common_name       => common_name,

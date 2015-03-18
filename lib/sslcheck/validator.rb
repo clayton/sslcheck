@@ -18,6 +18,7 @@ module SSLCheck
         Validators::CommonName,
         Validators::IssueDate,
         Validators::ExpirationDate,
+        Validators::CABundle,
       ]
     end
 

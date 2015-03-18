@@ -19,6 +19,7 @@ module SSLCheck
         expect(Validators::CommonName).to receive(:new).and_return(Validators::CommonName.new("example.com", @cert, @ca_bundle))
         expect(Validators::IssueDate).to receive(:new).and_return(Validators::IssueDate.new("example.com", @cert, @ca_bundle))
         expect(Validators::ExpirationDate).to receive(:new).and_return(Validators::ExpirationDate.new("example.com", @cert, @ca_bundle))
+        expect(Validators::CABundle).to receive(:new).and_return(Validators::CABundle.new("example.com", @cert, @ca_bundle))
 
         @sut.validate("example.com", @cert, @ca_bundle)
       end
@@ -51,44 +52,33 @@ module SSLCheck
       context 'when the certificate is valid' do
         before do
           @cert = Certificate.new(VALID_CERT)
-          @ca_bundle = [Certificate.new(CA_PARENT), Certificate.new(CA_GRAND_PARENT)]
+          @ca_bundle = [Certificate.new(CA_PARENT), Certificate.new(CA_GRAND_PARENT), Certificate.new(CA_GREAT_GRAND_PARENT)]
           @sut = Validator.new
+          @validators = [PassThroughValidator]
         end
 
         it 'should be valid' do
-          @sut.validate("www.npboards.com", @cert, @ca_bundle)
+          @sut.validate("www.npboards.com", @cert, @ca_bundle, @validators)
           expect(@sut.valid?).to be
 
         end
 
         it 'should have no errors' do
-          @sut.validate("www.npboards.com", @cert, @ca_bundle)
+          @sut.validate("www.npboards.com", @cert, @ca_bundle, @validators)
           expect(@sut.errors).to be_empty
         end
 
         it 'should have no warnings' do
-          @sut.validate("www.npboards.com", @cert, @ca_bundle)
+          @sut.validate("www.npboards.com", @cert, @ca_bundle, @validators)
           expect(@sut.warnings).to be_empty
         end
-        context "when the certificate was issused to a wildcard domain" do
-          it 'should be valid' do
-            @cert = Certificate.new(WILDCARD_CERT)
-            @ca_bundle = [Certificate.new(CA_PARENT), Certificate.new(CA_GRAND_PARENT)]
-            @sut = Validator.new
-            @sut.validate("foobar.squarespace.com", @cert, @ca_bundle)
-
-            expect(@sut.valid?).to be
-          end
-        end
-        context "when the certificate has alternate subject names" do
-          it 'should allow matches against the supplied common name' do
-            @sut.validate("npboards.com", @cert, @ca_bundle)
-            expect(@sut.valid?).to be
-          end
-        end
-      end
-      xcontext "when the certificate is not valid" do
       end
     end
+  end
+end
+
+class PassThroughValidator < SSLCheck::Validators::GenericValidator
+  def validate
+    nil
   end
 end
