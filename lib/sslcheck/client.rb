@@ -5,13 +5,26 @@ require 'openssl'
 module SSLCheck
   class Client
     class Response
-      attr_accessor :host_name, :peer_cert, :peer_cert_chain, :errors
-      alias_method :ca_bundle, :peer_cert_chain
+      attr_accessor :host_name, :errors
 
       def initialize
-        self.peer_cert = nil
-        self.peer_cert_chain = []
         self.errors = []
+      end
+
+      def raw_peer_cert=(peer_cert)
+        @raw_peer_cert = peer_cert
+      end
+
+      def raw_peer_cert_chain=(peer_cert_chain)
+        @raw_peer_cert_chain = peer_cert_chain
+      end
+
+      def peer_cert
+        Certificate.new(@raw_peer_cert)
+      end
+
+      def ca_bundle
+        @raw_peer_cert_chain.map{|ca_cert| Certificate.new(ca_cert) }
       end
     end
 
@@ -31,8 +44,8 @@ module SSLCheck
           socket.sync_close = true
           socket.connect
           @response.host_name = uri.host
-          @response.peer_cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
-          @response.peer_cert_chain = socket.peer_cert_chain
+          @response.raw_peer_cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
+          @response.raw_peer_cert_chain = socket.peer_cert_chain
         end
 
         @socket.sysclose

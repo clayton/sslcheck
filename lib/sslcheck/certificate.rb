@@ -108,11 +108,9 @@ module SSLCheck
     end
 
     def bootstrap_certificate(cert)
-      if cert.is_a?(OpenSSL::X509::Certificate)
-        return cert
-      else
-        return OpenSSL::X509::Certificate.new cert
-      end
+      return cert if cert.is_a?(OpenSSL::X509::Certificate)
+      return cert if cert.is_a?(SSLCheck::Certificate)
+      OpenSSL::X509::Certificate.new cert
     end
 
   end

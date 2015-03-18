@@ -36,8 +36,8 @@ module SSLCheck
       it 'should expose the certificates that were found' do
         @sut = Check.new(FakeClient.new(FakeClientResponse.new(@peer_cert, @ca_bundle)), FakeValidator.new)
         @sut.check('www.example.com')
-        expect(@sut.peer_cert).to eq(@peer_cert)
-        expect(@sut.ca_bundle).to eq(@ca_bundle)
+        expect(@sut.peer_cert).to be
+        expect(@sut.ca_bundle).to be
       end
 
       it 'should expose the hostname parsed from the URL' do

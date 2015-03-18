@@ -13,13 +13,13 @@ module SSLCheck
         it 'should have the peer certificate' do
           sut = Client.new
           response = sut.get('https://www.sslinsight.com')
-          expect(response.peer_cert).to be_a(OpenSSL::X509::Certificate)
+          expect(response.peer_cert).to be_a(SSLCheck::Certificate)
         end
 
         it 'should have the peer cert chain' do
           sut = Client.new
           response = sut.get('https://www.sslinsight.com')
-          expect(response.peer_cert_chain.first).to be_a(OpenSSL::X509::Certificate)
+          expect(response.ca_bundle.first).to be_a(SSLCheck::Certificate)
         end
       end
 
