@@ -1,0 +1,7 @@
+#!/bin/bash
+
+third_build=`expr $TRAVIS_JOB_ID % 3`
+
+if [ $third_build -eq 0 ]; then
+  bundle exec rspec acceptance
+fi
