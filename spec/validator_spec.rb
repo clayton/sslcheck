@@ -2,16 +2,27 @@ require 'spec_helper'
 
 module SSLCheck
   describe 'Validator' do
-    describe 'Validating a Certificate' do
+    describe 'Using Validators' do
+      before do
+        @cert = Certificate.new(VALID_CERT)
+        @ca_bundle = [Certificate.new(CA_PARENT), Certificate.new(CA_GRAND_PARENT)]
+        @sut = Validator.new
+      end
       it 'should validate the certificate with available validators' do
-        cert = Certificate.new(VALID_CERT)
-        ca_bundle = [Certificate.new(CA_PARENT), Certificate.new(CA_GRAND_PARENT)]
-        sut = Validator.new
         validator = Validators::GenericValidator
 
-        expect(validator).to receive(:new).and_return(Validators::GenericValidator.new("example.com", cert, ca_bundle))
-        sut.validate("example.com", cert, ca_bundle, [validator])
+        expect(validator).to receive(:new).and_return(Validators::GenericValidator.new("example.com", @cert, @ca_bundle))
+        @sut.validate("example.com", @cert, @ca_bundle, [validator])
       end
+
+      it 'should have default validators' do
+        expect(Validators::CommonName).to receive(:new).and_return(Validators::CommonName.new("example.com", @cert, @ca_bundle))
+        expect(Validators::IssueDate).to receive(:new).and_return(Validators::IssueDate.new("example.com", @cert, @ca_bundle))
+
+        @sut.validate("example.com", @cert, @ca_bundle)
+      end
+    end
+    describe 'Validating a Certificate' do
       context "when an expected common name is not supplied" do
         before do
           @sut = Validator.new
@@ -46,6 +57,7 @@ module SSLCheck
         it 'should be valid' do
           @sut.validate("www.npboards.com", @cert, @ca_bundle)
           expect(@sut.valid?).to be
+
         end
 
         it 'should have no errors' do

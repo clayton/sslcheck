@@ -17,7 +17,7 @@ module SSLCheck
       it 'should return errors' do
         sut = Validators::CommonName.new("example.com", @cert, @ca_bundle)
         result = sut.validate
-        expect(result).to be_a SSLCheck::Errors::CommonNameMismatch
+        expect(result).to be_a SSLCheck::Errors::Validation::CommonNameMismatch
       end
     end
   end

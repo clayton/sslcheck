@@ -1,13 +1,13 @@
 module SSLCheck
   module Errors
-    class Validation < GenericError
-    end
-
     module Connection
       class InvalidURI < GenericError; end
       class SSLVerify < GenericError; end
     end
 
-    class CommonNameMismatch < Validation;end
+    module Validation
+      class CommonNameMismatch < GenericError;end
+      class NotYetIssued < GenericError;end
+    end
   end
 end

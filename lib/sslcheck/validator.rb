@@ -14,6 +14,10 @@ module SSLCheck
       @peer_cert   = nil
       @ca_bundle   = []
       @validated   = false
+      @default_validators = [
+        Validators::CommonName,
+        Validators::IssueDate,
+      ]
     end
 
     def validate(common_name=nil, peer_cert=nil, ca_bundle=[], validators=[])
@@ -27,11 +31,11 @@ module SSLCheck
     end
 
     def valid?
-      @validated && @errors.empty?
+      @validated && errors.empty?
     end
 
     def errors
-      @errors
+      @errors.compact
     end
 
     def warnings
@@ -40,6 +44,7 @@ module SSLCheck
 
   private
     def run_validations(validators)
+      validators = @default_validators if validators.empty?
       validators.each do |validator|
         @errors << validator.new(@common_name, @peer_cert, @ca_bundle).validate
       end

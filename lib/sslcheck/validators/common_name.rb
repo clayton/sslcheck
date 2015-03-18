@@ -3,7 +3,7 @@ module SSLCheck
     class CommonName < GenericValidator
       def validate
         return nil if common_name_matches?
-        SSLCheck::Errors::CommonNameMismatch.new({:name => "Common Name Mismatch", :message => "This certificate is not valid for #{@common_name}."})
+        SSLCheck::Errors::Validation::CommonNameMismatch.new({:name => "Common Name Mismatch", :message => "This certificate is not valid for #{@common_name}."})
       end
 
     private
