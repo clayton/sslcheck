@@ -17,6 +17,7 @@ module SSLCheck
       @default_validators = [
         Validators::CommonName,
         Validators::IssueDate,
+        Validators::ExpirationDate,
       ]
     end
 

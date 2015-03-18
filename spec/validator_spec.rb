@@ -18,6 +18,7 @@ module SSLCheck
       it 'should have default validators' do
         expect(Validators::CommonName).to receive(:new).and_return(Validators::CommonName.new("example.com", @cert, @ca_bundle))
         expect(Validators::IssueDate).to receive(:new).and_return(Validators::IssueDate.new("example.com", @cert, @ca_bundle))
+        expect(Validators::ExpirationDate).to receive(:new).and_return(Validators::ExpirationDate.new("example.com", @cert, @ca_bundle))
 
         @sut.validate("example.com", @cert, @ca_bundle)
       end

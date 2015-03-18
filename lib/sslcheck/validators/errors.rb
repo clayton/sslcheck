@@ -8,6 +8,7 @@ module SSLCheck
     module Validation
       class CommonNameMismatch < GenericError;end
       class NotYetIssued < GenericError;end
+      class CertificateExpired < GenericError;end
     end
   end
 end
