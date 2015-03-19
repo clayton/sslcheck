@@ -1,3 +1,5 @@
+require 'date'
+
 module SSLCheck
   module Validators
     class IssueDate < GenericValidator
