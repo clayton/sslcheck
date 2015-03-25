@@ -49,6 +49,8 @@ module SSLCheck
         end
 
         @socket.sysclose
+      rescue SocketError
+        @response.errors << SSLCheck::Errors::Connection::SocketError.new({:name => "Connection Error", :type => :socket_error, :message => "The connection to #{url} failed."})
       rescue URI::InvalidURIError
         @response.errors << SSLCheck::Errors::Connection::InvalidURI.new({:name => "Invalid URI Error", :type => :invalid_uri, :message => "The URI, #{url}, is not a valid URI."})
       rescue OpenSSL::SSL::SSLError

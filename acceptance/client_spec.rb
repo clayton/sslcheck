@@ -39,6 +39,14 @@ module SSLCheck
         end
       end
 
+      context "When the URL is not a real TLD or gTLD" do
+        it 'should raise a connection error' do
+          sut = Client.new
+          response = sut.get("https://www.domain.does.not.exist.aljdahkqhb")
+          expect(response.errors.first).to be_a(SSLCheck::Errors::Connection::SocketError)
+        end
+      end
+
       context "When the URL is malformed" do
         it 'should raise an invalid URI error' do
           sut = Client.new

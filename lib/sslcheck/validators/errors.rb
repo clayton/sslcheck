@@ -3,6 +3,7 @@ module SSLCheck
     module Connection
       class InvalidURI < GenericError; end
       class SSLVerify < GenericError; end
+      class SocketError < GenericError; end
     end
 
     module Validation
