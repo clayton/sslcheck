@@ -47,13 +47,17 @@ module SSLCheck
 
     def fetch(url)
       response = @client.get(url)
-      self.peer_cert = response.peer_cert
-      self.ca_bundle = response.ca_bundle
-      self.host_name = response.host_name
+
+      if response.errors.empty?
+        self.peer_cert = response.peer_cert
+        self.ca_bundle = response.ca_bundle
+        self.host_name = response.host_name
+      end
 
       response.errors.each do |error|
         @errors << error
       end
+
       true
     end
 

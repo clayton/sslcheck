@@ -38,7 +38,7 @@ module SSLCheck
 
         sock = TCPSocket.new(uri.host, 443)
         ctx = OpenSSL::SSL::SSLContext.new
-        ctx.set_params(verify_mode: OpenSSL::SSL::VERIFY_PEER)
+        ctx.set_params(:verify_mode => OpenSSL::SSL::VERIFY_PEER)
 
         @socket = OpenSSL::SSL::SSLSocket.new(sock, ctx).tap do |socket|
           socket.sync_close = true
