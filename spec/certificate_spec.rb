@@ -130,5 +130,29 @@ module SSLCheck
         expect(@sut.issued?).to be
       end
     end
+    describe "days from expiration" do
+      it 'should know how many days until the certificate expires' do
+        expires_at = Certificate.new(VALID_CERT).not_after
+        clock = class_double(DateTime, :now => expires_at - 30.days)
+        @sut = Certificate.new(VALID_CERT, clock)
+        expect(@sut.expires_in?(30)).to be
+      end
+      context "when it's less than 1 day from expiring" do
+        it 'should still know that it is expiring' do
+          expires_at = Certificate.new(VALID_CERT).not_after
+          clock = class_double(DateTime, :now => expires_at - 12.hours)
+          @sut = Certificate.new(VALID_CERT, clock)
+          expect(@sut.expires_in?(1)).to be
+        end
+      end
+      context "when it's not expiring in the given timeframe" do
+        it 'should not think its expiring within the given number of days' do
+          expires_at = Certificate.new(VALID_CERT).not_after
+          clock = class_double(DateTime, :now => expires_at - 60.days)
+          @sut = Certificate.new(VALID_CERT, clock)
+          expect(@sut.expires_in?(30)).to_not be
+        end
+      end
+    end
   end
 end

@@ -108,6 +108,10 @@ module SSLCheck
       @clock.now > not_after
     end
 
+    def expires_in?(num_days)
+      (@clock.now.beginning_of_day + num_days.days) >= not_after.beginning_of_day
+    end
+
     def issued?
       @clock.now > not_before
     end

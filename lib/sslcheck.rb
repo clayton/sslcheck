@@ -1,5 +1,6 @@
 require "sslcheck/version"
 require 'openssl'
+require 'active_support/all'
 
 module SSLCheck
   # Your code goes here...
