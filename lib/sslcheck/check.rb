@@ -63,6 +63,7 @@ module SSLCheck
 
     def validate
       @validator.validate(host_name, peer_cert, ca_bundle)
+      @errors = @errors + @validator.errors
       true
     end
   end

@@ -12,7 +12,8 @@ module SSLCheck
       end
 
       def matching_wildcard_domain
-        true if (@peer_cert.common_name.match(/\*\./) && @common_name.include?(@peer_cert.common_name.gsub(/\*\./,'')))
+        return true if (@peer_cert.common_name.match(/\*\./) && @common_name.include?(@peer_cert.common_name.gsub(/\*\./,'')))
+        false
       end
 
       def direct_common_name_match

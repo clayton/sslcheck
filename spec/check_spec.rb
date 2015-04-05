@@ -111,6 +111,13 @@ module SSLCheck
           expect(@sut.valid?).to be
         end
       end
+      context "when the certificate is invalid" do
+        it 'should bubble up any errors found during validation' do
+          @sut = Check.new(FakeClient.new(FakeClientResponse.new(@peer_cert, @ca_bundle)), FakeValidator.new(false, [SSLCheck::Errors::GenericError.new({:name => "generic error", :message => "generic error"})]))
+          @sut.check('www.example.com')
+          expect(@sut.errors.empty?).to_not be
+        end
+      end
     end
   end
 end

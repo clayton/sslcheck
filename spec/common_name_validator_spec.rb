@@ -27,7 +27,6 @@ module SSLCheck
           expect(result).to_not be
         end
       end
-
     end
     context "when the common name is mismatched" do
       it 'should return errors' do
@@ -36,5 +35,18 @@ module SSLCheck
         expect(result).to be_a SSLCheck::Errors::Validation::CommonNameMismatch
       end
     end
+    context "When not a wildcard domain" do
+
+      context "and part of the common name matches" do
+        @cert = Certificate.new(APP_SSL_INSIGHT_CERT)
+        @ca_bundle = [Certificate.new(CA_PARENT), Certificate.new(CA_GRAND_PARENT)]
+        it 'should return errors' do
+          sut = Validators::CommonName.new("mismatch.examples.sslinsight.com", @cert, @ca_bundle)
+          result = sut.validate
+          expect(result).to be_a SSLCheck::Errors::Validation::CommonNameMismatch
+        end
+      end
+    end
+
   end
 end
