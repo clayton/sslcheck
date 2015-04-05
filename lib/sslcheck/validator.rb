@@ -28,6 +28,8 @@ module SSLCheck
       raise CABundleMissingError if ca_bundle.nil? || ca_bundle.empty?
       @common_name = common_name
       @peer_cert = peer_cert
+      @ca_bundle = ca_bundle
+
 
       run_validations(validators)
     end
