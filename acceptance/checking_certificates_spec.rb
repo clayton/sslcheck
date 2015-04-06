@@ -15,7 +15,7 @@ module SSLCheck
     end
     context "when the certificate is valid" do
       before do
-        @check = Check.new.check("http://www.sslinsight.com")
+        @check = Check.new.check("https://www.sslinsight.com")
       end
       it 'should be valid' do
         expect(@check.valid?).to be
@@ -28,6 +28,17 @@ module SSLCheck
       end
       it 'should know the ca bundle' do
         expect(@check.ca_bundle).to be
+      end
+    end
+    context "when the certificate is on a subdomain, but not a wildcard cert" do
+      before do
+        @check = Check.new.check("https://app.sslinsight.com")
+      end
+      it 'should be valid' do
+        expect(@check.valid?).to be
+      end
+      it 'should not have any errors' do
+        expect(@check.errors).to be_empty
       end
     end
     context "when the common name is not correct" do

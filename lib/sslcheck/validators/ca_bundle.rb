@@ -11,9 +11,20 @@ module SSLCheck
         return false if @ca_bundle.empty?
 
         store = OpenSSL::X509::Store.new
+        store.set_default_paths
+
+        begin
+          store.add_file File.join(SSL_CHECK_ROOT_DIR,'ca-bundle', 'ca-bundle.crt')
+        rescue OpenSSL::X509::StoreError
+          # If the certificate is already present,
+          # we don't really care
+        end
 
         @ca_bundle.each do |ca_cert|
-          store.add_cert ca_cert.to_x509
+          begin
+            store.add_cert ca_cert.to_x509
+          rescue OpenSSL::X509::StoreError
+          end
         end
 
         store.verify(@peer_cert.to_x509)

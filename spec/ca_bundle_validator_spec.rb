@@ -15,7 +15,7 @@ module SSLCheck
     end
     context "when the certificate cannot be verified by the CA Bundle" do
       it 'should return errors' do
-        sut = Validators::CABundle.new("npboards.com", @cert, [Certificate.new(CA_PARENT)])
+        sut = Validators::CABundle.new("npboards.com", @cert, [Certificate.new(VALID_CERT)])
         result = sut.validate
         expect(result).to be_a SSLCheck::Errors::Validation::CABundleVerification
       end

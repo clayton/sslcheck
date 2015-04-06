@@ -6,6 +6,8 @@ module SSLCheck
   # Your code goes here...
 end
 
+SSL_CHECK_ROOT_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+
 require 'sslcheck/certificate'
 require 'sslcheck/validator'
 require 'sslcheck/certificate_client'
