@@ -4,6 +4,7 @@ module SSLCheck
       class InvalidURI < GenericError; end
       class SSLVerify < GenericError; end
       class SocketError < GenericError; end
+      class Timeout < GenericError; end
     end
 
     module Validation

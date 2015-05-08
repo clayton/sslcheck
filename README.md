@@ -48,6 +48,18 @@ Are there any errors?
   => []
 ```
 
+## Timeouts
+
+By default, connections to verify a certificate will timeout after 30 seconds. To
+change this behavior, specify your own timeout, in seconds, on the `SSLCheck::Client`
+class.
+
+```
+  SSLCheck::Client.timeout_seconds = 10  # A 10 second timeout
+  check = SSLCheck::Check.new
+  check.check("github.com")
+```
+
 What are the details of the certificate?
 
 The peer certificate found during the check is available with a rich

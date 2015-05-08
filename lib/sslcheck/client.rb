@@ -4,6 +4,16 @@ require 'openssl'
 
 module SSLCheck
   class Client
+    @@timeout_seconds = 30
+
+    def self.timeout_seconds
+      @@timeout_seconds
+    end
+
+    def self.timeout_seconds=(seconds)
+      @@timeout_seconds = seconds
+    end
+
     class Response
       attr_accessor :host_name, :errors
 
@@ -34,21 +44,33 @@ module SSLCheck
 
     def get(url)
       begin
-        uri = determine_uri(url)
+        Timeout::timeout(Client.timeout_seconds) {
+          uri = determine_uri(url)
 
-        sock = TCPSocket.new(uri.host, 443)
-        ctx = OpenSSL::SSL::SSLContext.new
-        ctx.set_params(:verify_mode => OpenSSL::SSL::VERIFY_PEER)
+          sock = TCPSocket.new(uri.host, 443)
+          ctx = OpenSSL::SSL::SSLContext.new
+          ctx.set_params(
+            :verify_mode => OpenSSL::SSL::VERIFY_PEER,
+            :timeout     => Client.timeout_seconds,
+            :ssl_timeout => Client.timeout_seconds,
+          )
 
-        @socket = OpenSSL::SSL::SSLSocket.new(sock, ctx).tap do |socket|
-          socket.sync_close = true
-          socket.connect
-          @response.host_name = uri.host
-          @response.raw_peer_cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
-          @response.raw_peer_cert_chain = socket.peer_cert_chain
-        end
+          ctx.timeout = Client.timeout_seconds
+          ctx.ssl_timeout = Client.timeout_seconds
 
-        @socket.sysclose
+          @socket = OpenSSL::SSL::SSLSocket.new(sock, ctx).tap do |socket|
+            socket.sync_close = true
+            socket.connect
+            @response.host_name = uri.host
+            @response.raw_peer_cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
+            @response.raw_peer_cert_chain = socket.peer_cert_chain
+          end
+
+          @socket.sysclose
+
+        }
+      rescue Timeout::Error, Errno::ETIMEDOUT
+        @response.errors << SSLCheck::Errors::Connection::Timeout.new({:name => "Timeout Error", :type => :timeout_error, :message => "The connection to #{url} took too long."})
       rescue SocketError
         @response.errors << SSLCheck::Errors::Connection::SocketError.new({:name => "Connection Error", :type => :socket_error, :message => "The connection to #{url} failed."})
       rescue URI::InvalidURIError
