@@ -4,6 +4,8 @@ An easy way to verify the installation of SSL certificates.
 
 [![Build Status](https://travis-ci.org/clayton/sslcheck.svg?branch=master)](https://travis-ci.org/clayton/sslcheck)
 [![Code Climate](https://codeclimate.com/github/clayton/sslcheck/badges/gpa.svg)](https://codeclimate.com/github/clayton/sslcheck)
+[![Test Coverage](https://codeclimate.com/github/clayton/sslcheck/badges/coverage.svg)](https://codeclimate.com/github/clayton/sslcheck/coverage)
+[![Issue Count](https://codeclimate.com/github/clayton/sslcheck/badges/issue_count.svg)](https://codeclimate.com/github/clayton/sslcheck)
 
 ## Installation
 
