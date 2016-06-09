@@ -61,10 +61,10 @@ module SSLCheck
       end
 
       context "When there is no SSL Certificate present" do
-        it 'should raise a timeout error' do
+        it 'should raise a verification error' do
           sut = Client.new
-          response = sut.get('https://nossl.com/')
-          expect(response.errors.first).to be_a(SSLCheck::Errors::Connection::Timeout)
+          response = sut.get('http.badssl.com')
+          expect(response.errors.first).to be_a(SSLCheck::Errors::Connection::SSLVerify)
         end
       end
 

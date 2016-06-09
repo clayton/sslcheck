@@ -1,5 +1,5 @@
 module SSLCheck
-  class Check
+  class Checker
     attr_accessor :peer_cert, :ca_bundle, :host_name
     def initialize(client=nil, validator=nil)
       @client = client || Client.new

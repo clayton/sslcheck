@@ -5,7 +5,7 @@ module SSLCheck
     context "when the certificate is missing" do
       before do
         SSLCheck::Client.timeout_seconds = 1
-        @check = Check.new.check("nossl.com")
+        @check = Checker.new.check("nossl.com")
       end
       it 'should not be valid' do
         expect(@check.valid?).to_not be
@@ -16,7 +16,7 @@ module SSLCheck
     end
     context "when the certificate is valid" do
       before do
-        @check = Check.new.check("letsencrypt.org")
+        @check = Checker.new.check("letsencrypt.org")
       end
       it 'should be valid' do
         expect(@check.valid?).to be
@@ -33,7 +33,7 @@ module SSLCheck
     end
     xcontext "when the certificate is on a subdomain, but not a wildcard cert" do
       before do
-        @check = Check.new.check("https://www.httpbin.org")
+        @check = Checker.new.check("https://www.httpbin.org")
       end
       it 'should be valid' do
         expect(@check.valid?).to be
@@ -44,7 +44,7 @@ module SSLCheck
     end
     context "when the common name is not correct" do
       before do
-        @check = Check.new.check('https://wrong.host.badssl.com/')
+        @check = Checker.new.check('https://wrong.host.badssl.com/')
       end
       it 'should not be valid' do
         expect(@check.valid?).to_not be

@@ -25,7 +25,7 @@ The SSLCheck gem has a simple API.
 First create a check:
 
 ```
-  check = SSLCheck::Check.new
+  check = SSLCheck::Checker.new
 ```
 
 Then, check a url:
@@ -56,7 +56,7 @@ class.
 
 ```
   SSLCheck::Client.timeout_seconds = 10  # A 10 second timeout
-  check = SSLCheck::Check.new
+  check = SSLCheck::Checker.new
   check.check("github.com")
 ```
 
@@ -141,7 +141,7 @@ for more information.
 ### Using a custom client
 
 ```
-  check = SSLCheck::Check.new(MyClient.new)
+  check = SSLCheck::Checker.new(MyClient.new)
 ```
 
 ## Custom Validators and Validations
@@ -153,7 +153,7 @@ the default validations. For more information see `SSLCheck::Validator`
 
 ```
   # passing nil as the first argument to use the default client
-  check = SSLCheck::Check.new(nil, MyValidator.new)
+  check = SSLCheck::Checker.new(nil, MyValidator.new)
 ```
 
 ## Contributing
