@@ -23,29 +23,29 @@ Use the gem with bundler by adding the following to your `Gemfile`
 
 The SSLCheck gem has a simple API.
 
-First create a check:
+First create a Checker:
 
 ```
-  check = SSLCheck::Checker.new
+  checker = SSLCheck::Checker.new
 ```
 
 Then, check a url:
 
 ```
-  check.check("github.com")
+  checker.check("github.com")
 ```
 
 Is the certificate valid?
 
 ```
-  check.valid?
+  checker.valid?
   => true
 ```
 
 Are there any errors?
 
 ```
-  check.errors
+  checker.errors
   => []
 ```
 
@@ -57,8 +57,8 @@ class.
 
 ```
   SSLCheck::Client.timeout_seconds = 10  # A 10 second timeout
-  check = SSLCheck::Checker.new
-  check.check("github.com")
+  checker = SSLCheck::Checker.new
+  checker.check("github.com")
 ```
 
 What are the details of the certificate?
