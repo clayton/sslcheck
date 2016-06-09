@@ -2,5 +2,4 @@ language: ruby
 rvm:
   - 2.2.0-p0
 script:
-  - bundle exec rspec spec/
-  - ./run_acceptance_on_ci
+  - bundle exec rspec spec/ acceptance/
