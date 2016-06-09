@@ -68,7 +68,7 @@ method is provided on the `Certificate` to get at most of the important details.
 
 ```
   checker.peer_cert.to_h
-  {:common_name=>"www.sslinsight.com",
+  {:common_name=>"letsencrypt.org",
    :organization_unit=>"Domain Control Validated",
    :not_before=>
     #<DateTime: 2014-07-25T00:00:00+00:00 ((2456864j,0s,0n),+0s,2299161j)>,
@@ -82,7 +82,7 @@ method is provided on the `Certificate` to get at most of the important details.
      :state=>"Greater Manchester",
      :locality=>"Salford",
      :organization=>"COMODO CA Limited"}}
-  => {:common_name=>"www.sslinsight.com", :organization_unit=>"Domain Control Validated", :not_before=>#<DateTime: 2014-07-25T00:00:00+00:00 ((2456864j,0s,0n),+0s,2299161j)>, :not_after=>#<DateTime: 2015-07-25T23:59:59+00:00 ((2457229j,86399s,0n),+0s,2299161j)>, :issued=>true, :expired=>false, :issuer=>{:common_name=>"COMODO RSA Domain Validation Secure Server CA", :country=>"GB", :state=>"Greater Manchester", :locality=>"Salford", :organization=>"COMODO CA Limited"}}
+  => {:common_name=>"letsencrypt.org", :organization_unit=>"Domain Control Validated", :not_before=>#<DateTime: 2014-07-25T00:00:00+00:00 ((2456864j,0s,0n),+0s,2299161j)>, :not_after=>#<DateTime: 2015-07-25T23:59:59+00:00 ((2457229j,86399s,0n),+0s,2299161j)>, :issued=>true, :expired=>false, :issuer=>{:common_name=>"COMODO RSA Domain Validation Secure Server CA", :country=>"GB", :state=>"Greater Manchester", :locality=>"Salford", :organization=>"COMODO CA Limited"}}
 ```
 
 What are the details of the CA Bundle?
@@ -163,6 +163,10 @@ the default validations. For more information see `SSLCheck::Validator`
 * Commit & Push
 * Submit a pull request
 
+## Special Thanks
+
+* [https://badssl.com](https://badssl.com)
+* [https://letsencrypt.org](https://letsencrypt.org)
 
 ## License
 

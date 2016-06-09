@@ -8,7 +8,7 @@ module SSLCheck
     end
     context "when the common name is valid" do
       it 'should return nothing' do
-        sut = Validators::CommonName.new("npboards.com", @cert, @ca_bundle)
+        sut = Validators::CommonName.new("letsencrypt.org", @cert, @ca_bundle)
         result = sut.validate
         expect(result).to_not be
       end
@@ -22,7 +22,7 @@ module SSLCheck
       end
       context "when the certificate has alternate subject names" do
         it 'should allow matches against the supplied common name' do
-          sut = Validators::CommonName.new("npboards.com", @cert, @ca_bundle)
+          sut = Validators::CommonName.new("letsencrypt.org", @cert, @ca_bundle)
           result = sut.validate
           expect(result).to_not be
         end

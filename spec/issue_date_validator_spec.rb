@@ -8,14 +8,14 @@ module SSLCheck
     end
     context "when the issue date is in the past" do
       it 'should return nothing' do
-        sut = Validators::IssueDate.new("npboards.com", @cert, @ca_bundle)
+        sut = Validators::IssueDate.new("letsencrypt.org", @cert, @ca_bundle)
         result = sut.validate(FutureClock.new)
         expect(result).to_not be
       end
     end
     context "when the issue date is in the future" do
       it 'should return errors' do
-        sut = Validators::IssueDate.new("npboards.com", @cert, @ca_bundle)
+        sut = Validators::IssueDate.new("letsencrypt.org", @cert, @ca_bundle)
         result = sut.validate(PastClock.new)
         expect(result).to be_a SSLCheck::Errors::Validation::NotYetIssued
       end

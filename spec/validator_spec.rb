@@ -52,24 +52,24 @@ module SSLCheck
       context 'when the certificate is valid' do
         before do
           @cert = Certificate.new(VALID_CERT)
-          @ca_bundle = [Certificate.new(CA_PARENT), Certificate.new(CA_GRAND_PARENT), Certificate.new(CA_GREAT_GRAND_PARENT)]
+          @ca_bundle = [Certificate.new(CA_PARENT), Certificate.new(CA_GRAND_PARENT)]
           @sut = Validator.new
           @validators = [PassThroughValidator]
         end
 
         it 'should be valid' do
-          @sut.validate("www.npboards.com", @cert, @ca_bundle, @validators)
+          @sut.validate("www.letsencrypt.org", @cert, @ca_bundle, @validators)
           expect(@sut.valid?).to be
 
         end
 
         it 'should have no errors' do
-          @sut.validate("www.npboards.com", @cert, @ca_bundle, @validators)
+          @sut.validate("www.letsencrypt.org", @cert, @ca_bundle, @validators)
           expect(@sut.errors).to be_empty
         end
 
         it 'should have no warnings' do
-          @sut.validate("www.npboards.com", @cert, @ca_bundle, @validators)
+          @sut.validate("www.letsencrypt.org", @cert, @ca_bundle, @validators)
           expect(@sut.warnings).to be_empty
         end
       end
