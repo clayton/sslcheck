@@ -6,6 +6,8 @@ An easy way to verify the installation of SSL certificates.
 [![Code Climate](https://codeclimate.com/github/clayton/sslcheck/badges/gpa.svg)](https://codeclimate.com/github/clayton/sslcheck)
 [![Test Coverage](https://codeclimate.com/github/clayton/sslcheck/badges/coverage.svg)](https://codeclimate.com/github/clayton/sslcheck/coverage)
 [![Issue Count](https://codeclimate.com/github/clayton/sslcheck/badges/issue_count.svg)](https://codeclimate.com/github/clayton/sslcheck)
+[![Gem Version](http://img.shields.io/gem/v/sslcheck.svg?style=flat-square)](https://rubygems.org/gems/sslcheck)
+[![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://clayton.mit-license.org)
 
 ## Installation
 
